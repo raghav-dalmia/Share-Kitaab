@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %} {{ book.title }} {% endblock %}
+
+{% block body %}
+
+{% if current_user.get_id() == user.id|string %}
+    <div class="modal fade" id="deleteBookModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete {{ book.title }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Do you want to delete this card?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" onclick="sendDeleteRequest()" class="btn btn-primary"><span><i class="fas fa-trash-alt"></i></span> Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const url = "/book/{{ book.id }}";
+        function sendDeleteRequest() {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                var new_url = xhr.responseText;
+                const index_url = {{ index_url }};
+                new_url = new_url.substr(1, new_url.length-3);
+                window.location.href = index_url + new_url;
+            }
+            xhr.open("DELETE", url, true);
+            xhr.send(null);
+        }
+    </script>
+{% elif current_user.is_authenticated %}
+    <div class="modal fade" id="requestBookModal" tabindex="-1" aria-labelledby="requestBookModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="requestBookModalLabel">Request for {{ book.title }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/request" method="post">
+                    <div class="modal-body row g-3">
+                        <input type="hidden" id="request_bookid" name="request_bookid" value="{{ book.id }}">
+                        <div class="col-md-8 mx-auto">
+                            <div class="input-group has-validation">
+                                <span class="input-group-text" id="inputGroupPrepend3"><i class="fas fa-align-left"></i></span>
+                                <textarea class="form-control" name = "request_reason" id="request_reason" aria-label="inputGroupPrepend3" rows="3" placeholder="Description" maxlength="100" minlength="20" required></textarea>
+                                <div class="invalid-feedback"> Minimum length should be 15. </div>
+                                <div class="valid-feedback"> Ok </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="modal fade" id="requestBookModal" tabindex="-1" aria-labelledby="requestBookModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="requestBookModalLabel">Request for {{ book.title }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row g-3">
+                    <p>Please login or <a href="/signup"> create a account </a> before making a request.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="/login" class="btn btn-primary">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% if current_user.is_authenticated %}
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+            <h3 class="offcanvas-title" id="offcanvasExampleLabel">Requests({{ book.numRequests }})</h3>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="list-group list-group-flush">
+                {% for request in requests %}
+                <li class="list-group-item">
+                <p>
+                    <a href="/profile/{{ request.userid }}"><span><i class="fas fa-user-circle"></i></span></a> &nbsp; {{ request.reason }}
+                    <br>
+                    <small class="text-muted">&nbsp; &nbsp;<strong>Requested on:</strong> {{ request.timestamp.strftime("%A, %d %b %Y %H:%M") }}</small>
+                </p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endif %}
+
+    <div class="card mb-3 mx-auto mt-2" style="max-width: 98%;">
+        <div class="row g-0">
+            <div class="col-md-4 text-center">
+                <img class="img-fluid" src="../static/images/books/{{ book.imageName }}" alt="{{ book.title }}" height="150">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h1 class="card-title">{{ book.title }}</h1>
+                    <p class="card-text">
+                        <span><i class="fas fa-map-marker-alt"></i></span> {{ book.location }}
+                        <br>
+                        {% if user.phone %}
+                            <span><i class="fas fa-phone-alt"></i></span> {{ user.phone }}
+                            <br>
+                        {% endif %}
+                        <strong>Description: </strong>{{ book.description }}
+                        <br>
+                        <small class="text-muted fw-lighter">
+                            &nbsp; <a href="#comment_section" class="link-secondary"><i class="far fa-comment-alt"></i> {{ book.numComments }} comments</a>
+                            &nbsp;&nbsp;
+                            <a class="link-secondary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"><i class="fas fa-handshake"></i> {{ book.numRequests }} requests</a>
+                        </small>
+                    </p>
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group me-2" role="group" aria-label="First group">
+                            <button type="button" class="btn btn-outline-success">{{ book.category }}</button>
+                        </div>
+                        <div class="btn-group me-2" role="group" aria-label="Second group">
+                            {% if current_user.get_id() == user.id|string %}
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteBookModal">
+                                    <span><i class="fas fa-trash-alt"></i></span> Delete
+                                </button>
+                            {% elif isRequested %}
+                                <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="You have already requested for this book.">
+                                    <button type="button" class="btn btn-lg btn-primary" disabled>Requested</button>
+                                </span>
+                            {% else %}
+                              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#requestBookModal">
+                                  <span><i class="fas fa-handshake"></i></span> Request
+                              </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <p class="card-text bottom-100"><small class="text-muted"><strong>Created on:</strong> {{ book.timestamp.strftime("%A, %d %b %Y %H:%M") }}</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mx-auto mt-3 mb-3" style="width: 98%">
+        <div class="card-body">
+            <div class="clearfix">
+                <h3 class="card-title float-start" id="comment_section"><span><i class="fas fa-comments"></i></span> <strong>Comments</strong></h3>
+                {% if current_user.is_authenticated %}
+                    <a href="#comment_form" class="btn btn-outline-primary float-end">Add comment &nbsp; <i class="fas fa-chevron-down"></i></a>
+                {% endif %}
+            </div>
+            <ul class="list-group list-group-flush ps-3">
+                {% for comment in comments %}
+                <li class="list-group-item">
+                    <p class="card-text">
+                        <a href="/profile/{{ comment.userid }}"><span><i class="fas fa-user-circle"></i></span></a>&nbsp; {{ comment.comment }}
+                        <br>
+                        {% if book.userid|int==comment.userid|int %}
+                            <span class="badge bg-warning">Owner's comments</span>
+                             <br>
+                        {% endif %}
+                        <small class="text-muted">&nbsp; &nbsp;<strong>Commented on:</strong> {{ comment.timestamp.strftime("%d %b %Y %H:%M") }}</small>
+                    </p>
+                </li>
+                {% endfor %}
+            </ul>
+            {% if current_user.is_authenticated %}
+                <form class="row g-3 needs-validation mt-2" id="comment_form" action="/book/{{ book.id }}/comment" method="post">
+                <div class="input-group has-validation">
+                    <span class="input-group-text" id="inputGroupPrepend3"><i class="fas fa-align-left"></i></span>
+                    <textarea class="form-control" name = "comment_description" id="comment_description" aria-label="inputGroupPrepend3" rows="1" placeholder="comment" maxlength="100" required></textarea>
+                    <div class="invalid-feedback"> Minimum length should be 15. </div>
+                    <div class="valid-feedback"> Ok </div>
+                </div>
+                <div class="btn-toolbar" role="toolbar">
+                    <div class="btn-group me-2" role="group" aria-label="First group">
+                        <button type="reset" id="donate_reset" class="btn btn-primary btn btn-block">Reset</button>
+                    </div>
+                    <div class="btn-group" role="group" aria-label="Second group">
+                        <button type="submit" class="btn btn-primary btn btn-block">Post</button>
+                    </div>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="../static/js/show_book.js"></script>
+{% endblock %}

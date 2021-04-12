@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %} Share Kitaab {% endblock %}
+
+{% block body %}
+    <div class="mt-2 text-center">
+        <h1><a class="navbar-brand" href="/"><i class="fas fa-book-reader"></i> Share Kitaab</a></h1>
+        <h3>Don't throw, Share it</h3>
+        <h4>Because sharing books is a way, by which you can give something without loosing something.</h4>
+    </div>
+        <div class="card shadow mb-3 mx-auto mt-4" style="max-width: 98%;">
+        <div class="row g-0">
+            <div class="col-md-4 text-center">
+                <img class="img-fluid" src="../static/images/errors/page-not-found.jpg" alt="404" height="150">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+            <h3 class="card-title text-danger"> Error Occur!</h3>
+            <p class="card-text">This page don't exists. Please go to <a href="{{ index_url }}">home</a> page or try again later.</p>
+            <h5 class="card-text"><strong>Contact</strong> Us:</h5>
+            <a href="mailto:helpinghandsforneedies@gmail.com" target="_blank" class="btn-sm card-text" ><i class="far fa-envelope" style="background-image: linear-gradient(45deg,#EA4335,#BB001B);"></i> helpinghandsforneedies@gmail.com </a>
+        </div>
+        </div>
+        </div>
+{% endblock %}

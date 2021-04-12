@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %} Share Kitaab {% endblock %}
+
+{% block custom_css %}
+    <link rel="stylesheet" href="../static/css/index.css">
+{% endblock %}
+
+{% block body %}
+    <div class="mt-2 text-center">
+        <h1><a class="navbar-brand" href="/"><i class="fas fa-book-reader"></i> Share Kitaab</a></h1>
+        <h3>Don't throw, Share it</h3>
+        <h4>Because sharing books is a way, by which you can give something without loosing something.</h4>
+        <div class="btn-group" role="group">
+            <a href="/donate-book" class="btn btn-primary shadow-sm me-2">Donate Book</a>
+            <a href="/about-us" class="btn btn-outline-primary shadow-sm">About Us</a>
+        </div>
+    </div>
+    {% if books|length==0 %}
+        <div class="text-center">
+            <img class="img-fluid" src="../static/images/errors/no-result.jpg">
+        </div>
+    {% else %}
+    <div class="row row-cols-1 row-cols-md-3 g-4 ms-1 mt-2 me-1 mb-2">
+    {% for book in books %}
+        <div class="col">
+            <a href="/book/{{ book.id }}" style="text-decoration: none; color: inherit;">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="card-title text-center">{{ book.title }}</h3>
+                    <p class="card-text">
+                        <span><i class="fas fa-map-marker-alt"></i></span> {{ book.location }}
+                        <br>
+                        <span class="d-inline-block text-truncate" style="max-width: 100%" data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ book.description }}">
+                            <strong>Description:</strong> {{ book.description }}
+                        </span>
+                        <br>
+                        <strong>Category: </strong> <a href="/?filter_category={{ book.category }}" class="btn-sm btn-success text-decoration-none">{{ book.category }}</a>
+                    </p>
+                    <p>
+                        <small class="text-muted fw-lighter">
+                            {% if book.userid|int==current_user.get_id()|int %}
+                                <span class="badge bg-info">Your Card</span>
+                                 &nbsp;
+                            {% endif %}
+                            &nbsp; <i class="far fa-comment-alt"></i> {{ book.numComments }} comments
+                            &nbsp;&nbsp;
+                            <i class="fas fa-handshake"></i> {{ book.numRequests }} requests
+                        </small>
+                    </p>
+
+                </div>
+                <div class="card-footer text-muted text-center">
+                    Posted on: {{ book.timestamp.strftime("%A, %d %b %Y %H:%M") }}
+                </div>
+            </div>
+            </a>
+        </div>
+    {% endfor %}
+    </div>
+    {% endif %}
+
+    <button type="button" class="btn btn-primary position-fixed bottom-0 end-0 me-4 mb-4 shadow" id="filter_button" data-bs-toggle="modal" data-bs-target="#fliter_modal">
+        <i class="fas fa-filter"></i>
+    </button>
+
+    <div class="modal fade" id="fliter_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="" method="get" action="/">
+                    <div class="modal-body row g-3">
+                        <div class="col-md-8 mx-auto">
+                            <div class="input-group">
+                                <span class="input-group-text" id="inputGroupPrepend2"><i class="fab fa-cuttlefish"></i></span>
+                                <select class="form-select" id="filter_category" name="filter_category" aria-describedby="inputGroupPrepend2">
+                                    <option value="select" selected>select category</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category }}">{{ category }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-8 mx-auto">
+                            <div class="input-group">
+                                <span class="input-group-text" id="inputGroupPrepend2"><i class="fas fa-map-marker-alt"></i></span>
+                                <select class="form-select" id="filter_location" name="filter_location" aria-describedby="inputGroupPrepend2">
+                                    <option value="select" selected>select location</option>
+                                    {% for location in locations %}
+                                        <option value="{{ location }}">{{ location }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Apply</button>
+                        <a href="/" class="btn btn-primary">Clear Filters</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../static/js/index.js"></script>
+{% endblock %}

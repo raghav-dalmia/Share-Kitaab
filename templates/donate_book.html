@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %} Share Kitaab {% endblock %}
+
+{% block custom_css %}
+    <link rel="stylesheet" href="../static/css/donate_book.css">
+{% endblock %}
+
+{% block body %}
+    <div class="card shadow-lg w-50 rounded-4 mx-auto mt-lg-5" id="login_card">
+        <div class="card-body text-center">
+            <h3 class="card-title">Donate Book</h3>
+            <form class="row g-3 needs-validation mt-2" id="donation_form" action="/book/{{ current_user.get_id() }}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()" novalidate>
+                <div class="col-md-8 mx-auto">
+                    <div class="input-group has-validation">
+                        <span class="input-group-text" id="inputGroupPrepend1"><i class="fas fa-quote-left"></i></span>
+                        <input type="text" class="form-control" id="donate_title" name="donate_title" aria-describedby="inputGroupPrepend1" placeholder="TItle(ex. Class 11 NCERT)" maxlength="30" required>
+                        <div class="invalid-feedback"> Please enter a title, like class 10 NCERT(s) </div>
+                        <div class="valid-feedback"> Ok </div>
+                    </div>
+                </div>
+                <div class="col-md-8 mx-auto">
+                    <div class="input-group has-validation">
+                        <span class="input-group-text" id="inputGroupPrepend2"><i class="fab fa-cuttlefish"></i></span>
+                        <select class="form-select" id="donate_category" name="donate_category" aria-describedby="inputGroupPrepend2" required>
+                            {% for category in categories %}
+                                <option value="{{ category }}">{{ category }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback"> Please choose valid category. </div>
+                        <div class="valid-feedback"> Ok </div>
+                    </div>
+                </div>
+                <div class="col-md-8 mx-auto">
+                    <div class="input-group has-validation">
+                        <span class="input-group-text" id="inputGroupPrepend3"><i class="fas fa-align-left"></i></span>
+                        <textarea class="form-control" name = "donate_description" id="donate_description" aria-label="inputGroupPrepend3" rows="3" placeholder="Description(ex. English, Maths part 1-2, Chemistry part 1 NCERT books.)" maxlength="100" minlength="10" required></textarea>
+                        <div class="invalid-feedback"> Minimum length should be 15. </div>
+                        <div class="valid-feedback"> Ok </div>
+                    </div>
+                </div>
+                <div class="col-md-8 mx-auto">
+                    <div class="input-group has-validation">
+                        <span class="input-group-text" id="inputGroupPrepend2"><i class="fas fa-map-marker-alt"></i></span>
+                        <select class="form-select" id="donate_location" name="donate_location" aria-describedby="inputGroupPrepend2" required>
+                            {% for location in locations %}
+                                <option value="{{ location }}">{{ location }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback"> Please choose valid category. </div>
+                        <div class="valid-feedback"> Ok </div>
+                    </div>
+                </div>
+                <div class="col-md-8 mx-auto">
+                    <div class="input-group has-validation">
+                        <span class="input-group-text" id="inputGroupPrepend7"><i class="fas fa-camera"></i></span>
+                        <input type="file" class="form-control" name="donate_image" aria-label="inputGroupPrepend7" accept="image/*" id="donate_image">
+                        <div class="invalid-feedback"> Please upload a valid image. </div>
+                        <div class="valid-feedback"> Ok </div>
+                    </div>
+                    <small class="text-muted">(Maximum allowed size is 500KB.)</small>
+                    <p class="text-muted fw-light" id="donate_image_description"></p>
+                </div>
+                <div class="col-md-8 mx-auto">
+                    <div class="btn-toolbar" role="toolbar">
+                        <div class="btn-group me-2" role="group" aria-label="First group">
+                            <button type="reset" id="donate_reset" class="btn btn-primary btn btn-block">Reset</button>
+                        </div>
+                        <div class="btn-group" role="group" aria-label="Second group">
+                            <button type="submit" class="btn btn-primary btn btn-block">Donate Book</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+      </div>
+    <small class="text-end me-2 mb-2"><a href="/tnc">Terms & Conditions</a> </small>
+    </div>
+
+    <script src="../static/js/donate_book.js"></script>
+{% endblock %}

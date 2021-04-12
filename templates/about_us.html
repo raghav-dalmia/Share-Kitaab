@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %} Share Kitaab {% endblock %}
+
+{% block body %}
+        <div class="mt-2 text-center">
+        <h1><a class="navbar-brand" href="/"><i class="fas fa-book-reader"></i> Share Kitaab</a></h1>
+        <h3>Don't throw, Share it</h3>
+        <h4>Because sharing books is a way, by which you can give something without loosing something.</h4>
+        <div class="btn-group" role="group">
+            <a href="/donate-book" class="btn btn-primary shadow-sm me-2">Donate Book</a>
+            <a href="/" class="btn btn-outline-primary shadow-sm">View Books</a>
+        </div>
+    </div>
+        <div class="card mx-auto mt-lg-5 shadow-lg" style="width: 90%">
+        <div class="card-body">
+            <h2 class="card-title text-center"> <strong>About</strong> Us</h2>
+            <p class="card-text">We (Share Kitaab) are providing a platform to connect students who can't afford books with those whose have similar resources.</p>
+            <h5 class="card-text"><strong>Contact</strong> Us:</h5>
+            <a href="mailto:helpinghandsforneedies@gmail.com" target="_blank" class="btn-sm card-text" ><i class="far fa-envelope" style="background-image: linear-gradient(45deg,#EA4335,#BB001B);"></i> helpinghandsforneedies@gmail.com </a>
+        </div>
+        </div>
+{% endblock %}
